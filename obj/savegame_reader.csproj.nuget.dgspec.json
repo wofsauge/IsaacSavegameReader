@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Workspace\\External-Item-Descriptions\\scripts\\savegame_reader\\savegame_reader.csproj": {}
+    "D:\\Workspace\\IsaacSavegameReader\\savegame_reader.csproj": {}
   },
   "projects": {
-    "D:\\Workspace\\External-Item-Descriptions\\scripts\\savegame_reader\\savegame_reader.csproj": {
+    "D:\\Workspace\\IsaacSavegameReader\\savegame_reader.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Workspace\\External-Item-Descriptions\\scripts\\savegame_reader\\savegame_reader.csproj",
+        "projectUniqueName": "D:\\Workspace\\IsaacSavegameReader\\savegame_reader.csproj",
         "projectName": "savegame_reader",
-        "projectPath": "D:\\Workspace\\External-Item-Descriptions\\scripts\\savegame_reader\\savegame_reader.csproj",
+        "projectPath": "D:\\Workspace\\IsaacSavegameReader\\savegame_reader.csproj",
         "packagesPath": "C:\\Users\\Jan-m\\.nuget\\packages\\",
-        "outputPath": "D:\\Workspace\\External-Item-Descriptions\\scripts\\savegame_reader\\obj\\",
+        "outputPath": "D:\\Workspace\\IsaacSavegameReader\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jan-m\\AppData\\Roaming\\NuGet\\NuGet.Config"

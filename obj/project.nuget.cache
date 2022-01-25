@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Ba6zz0Aj+WBv6WhxHppxV4DQo9xVr8X2e6v7UfTikC+FpgRQ/BYHvl/bIwLwlr5hueBXVd5D0VTCw3vZjOOycw==",
+  "dgSpecHash": "+aHEqbWOF2Ox7BlziONHVWNq+UY2BOUDxwQzv3AkaJGcY8sd+vKVgKxJWes7QkAvOcaVX2QewtRhyU8A2gXhaw==",
   "success": true,
-  "projectFilePath": "D:\\Workspace\\External-Item-Descriptions\\scripts\\savegame_reader\\savegame_reader.csproj",
+  "projectFilePath": "D:\\Workspace\\IsaacSavegameReader\\savegame_reader.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
