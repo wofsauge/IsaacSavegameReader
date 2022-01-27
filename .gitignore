@@ -1,4 +1,5 @@
 /bin
+eid_savegame.lua
 
 # Prerequisites
 *.d
