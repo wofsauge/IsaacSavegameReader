@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using Microsoft.Win32;
 
 namespace IsaacSavegameToLua
@@ -7,18 +7,41 @@ namespace IsaacSavegameToLua
     {
         static int curUserID = 0;
         static string lastUsername = "";
+        static string platform = "(Undefined)";
 
         static void Main(string[] args)
         {
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~");
+            Console.WriteLine("~~~ For Steam Users: Login to force a User to be selected ~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
             string saveGamePath = getSteamSavegamePath();
             if (saveGamePath == string.Empty)
             {
-                Console.WriteLine("Manual mode not implemented yet... Aborting");
-                return;
+                Console.WriteLine("~~~~~~~~~~~~~~~~ Manual Mode ~~~~~~~~~~~~~~~~~~~");
+                Console.WriteLine("In manual mode, you need to enter the filepath to your samegames yourself.");
+                Console.WriteLine("Please enter the folder path where your \"rep_persistentgamedata1.dat\" file is located:");
+                // reset steam infos
+                curUserID = 0;
+                lastUsername = "";
+                platform = "(Undefined)";
+
+                saveGamePath = @"" + Console.ReadLine();
+                if (File.Exists(saveGamePath))
+                {
+                    // strip the filename from the path if present
+                    saveGamePath = Path.GetDirectoryName(saveGamePath);
+                }
+
+                Console.WriteLine("Searching savegames in: " + saveGamePath);
+                if (!File.Exists(saveGamePath + "\\rep_persistentgamedata1.dat"))
+                {
+                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep_persistentgamedata1.dat\" file. Aborting...");
+                    Console.WriteLine("Press any key to close the program");
+                    Console.ReadKey();
+                    return;
+                }
             }
 
             using (StreamWriter writetext = new StreamWriter("eid_savegame.lua"))
@@ -27,8 +50,10 @@ namespace IsaacSavegameToLua
                 writetext.WriteLine("-- If you experience desynchronizations, please run the tool again");
 
                 writetext.WriteLine("\nEID.SaveGame = {}");
-                writetext.WriteLine("EID.SaveGame.SteamUserID = " + curUserID + " -- ID of the User");
-                writetext.WriteLine("EID.SaveGame.SteamUserName = \"" + lastUsername + "\" -- Name of the last logged in steam user\n");
+                writetext.WriteLine("EID.SaveGame.Platform = \"" + platform + "\" -- platform of the game (Steam, Epic, Others, ...)");
+                writetext.WriteLine("EID.SaveGame.UserID = " + curUserID + " -- Steam ID of the User");
+                writetext.WriteLine("EID.SaveGame.UserName = \"" + lastUsername + "\" -- Name of the steam user\n");
+
                 for (int i = 1; i < 4; i++)
                 {
                     writetext.WriteLine("EID.SaveGame[" + i + "] = {");
@@ -46,7 +71,7 @@ namespace IsaacSavegameToLua
 
             Console.WriteLine("SUCCESS! Savegame infos successfully added to EID");
             Console.WriteLine("Press any key to close the program");
-            //Console.ReadKey();
+            Console.ReadKey();
         }
 
         static string getSteamSavegamePath()
@@ -78,6 +103,7 @@ namespace IsaacSavegameToLua
 
             string saveGamePath = userDataPath + "\\" + curUserID + "\\250900\\remote";
             lastUsername = getUserNameFromID(userDataPath + "\\" + curUserID, curUserID);
+            platform = "Steam";
             return saveGamePath;
         }
 
