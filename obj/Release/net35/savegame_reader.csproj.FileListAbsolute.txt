@@ -1,7 +1,6 @@
 D:\Workspace\IsaacSavegameReader\bin\Release\net35\savegame_reader.exe.config
 D:\Workspace\IsaacSavegameReader\bin\Release\net35\savegame_reader.exe
 D:\Workspace\IsaacSavegameReader\bin\Release\net35\savegame_reader.pdb
-D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.csproj.AssemblyReference.cache
 D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.csproj.SuggestedBindingRedirects.cache
 D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.GeneratedMSBuildEditorConfig.editorconfig
 D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.AssemblyInfoInputs.cache

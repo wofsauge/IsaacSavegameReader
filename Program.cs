@@ -14,8 +14,8 @@ namespace IsaacSavegameToLua
         static void Main(string[] args)
         {
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~ Compatible with Repentance ~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~ Compatible with AB+ & Repentance ~~~~~~~~~~~~~~");
             Console.WriteLine("~~~ For Steam Users: Login to force a User to be selected ~~~");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
@@ -24,7 +24,7 @@ namespace IsaacSavegameToLua
             {
                 Console.WriteLine("~~~~~~~~~~~~~~~~ Manual Mode ~~~~~~~~~~~~~~~~~~~");
                 Console.WriteLine("In manual mode, you need to enter the filepath to your samegames yourself.");
-                Console.WriteLine("Please enter the folder path where your \"rep_persistentgamedata1.dat\" file is located:");
+                Console.WriteLine("Please enter the folder path where your \"abp_persistentgamedata1.dat\" or \"rep_persistentgamedata1.dat\" file is located:");
                 // reset steam infos
                 curUserID = 0;
                 lastUsername = "";
