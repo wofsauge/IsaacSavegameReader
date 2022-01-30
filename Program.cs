@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Microsoft.Win32;
 
 namespace IsaacSavegameToLua
@@ -58,8 +60,7 @@ namespace IsaacSavegameToLua
                 for (int i = 1; i < 4; i++)
                 {
                     writetext.WriteLine("EID.SaveGame[" + i + "] = {");
-                    Console.WriteLine("Reading save game slot " + i + "...");
-                    Dictionary<int, bool> touchState = readRepSavegame(saveGamePath + "\\rep_persistentgamedata" + i + ".dat");
+                    Dictionary<int, bool> touchState = readSavegame(saveGamePath, i);
 
                     writetext.Write("\tItemCollection = {\n\t\t");
                     foreach (var item in touchState)
@@ -128,7 +129,8 @@ namespace IsaacSavegameToLua
                 if (!isNumeric)
                     continue;
 
-                if (File.Exists(userDir + "\\250900\\remote\\rep_persistentgamedata1.dat"))
+                string checkDir = userDir + "\\250900\\remote\\";
+                if (File.Exists(checkDir+"rep_persistentgamedata1.dat") || File.Exists(checkDir + "abp_persistentgamedata1.dat"))
                 {
                     Console.WriteLine("Found user with a isaac savegame");
                     return userID;
@@ -163,18 +165,28 @@ namespace IsaacSavegameToLua
         }
 
 
-        static Dictionary<int, bool> readRepSavegame(string filepath)
+        static Dictionary<int, bool> readSavegame(string filepath, int saveID)
         {
-            Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
-            FileStream fs = new FileStream(filepath, FileMode.Open);
-
             int itemTouchLocation = Convert.ToInt32("0x00000AB6", 16);
+            string file = filepath + "\\rep_persistentgamedata" + saveID + ".dat";
+            string dlc = "Repentance";
+            if (!File.Exists(file))
+            {
+                file = filepath + "\\abp_persistentgamedata" + saveID + ".dat";
+                itemTouchLocation = Convert.ToInt32("0x00000560", 16);
+                dlc = "Afterbirth+";
+            }
+            Console.WriteLine("Reading " + dlc + " save game slot " + saveID + "...");
+
+            Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
+            FileStream fs = new FileStream(file, FileMode.Open);
+            
             int hexIn;
             int itemCount = 0;
             string firstBitItemCount = "";
             for (int i = 0; (hexIn = fs.ReadByte()) != -1; i++)
             {
-                String hex = string.Format("{0:X2}", hexIn);
+                string hex = string.Format("{0:X2}", hexIn);
                 if (i == itemTouchLocation)
                 {
                     firstBitItemCount = hex;

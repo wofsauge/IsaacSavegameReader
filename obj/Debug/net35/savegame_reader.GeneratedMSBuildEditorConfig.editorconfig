@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = savegame_reader
+build_property.ProjectDir = D:\Workspace\IsaacSavegameReader\
