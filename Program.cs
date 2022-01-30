@@ -66,7 +66,16 @@ namespace IsaacSavegameToLua
                     {
                         writetext.Write("[" + item.Key + "]=" + (item.Value ? "true" : "false") + ", ");
                     }
-                    writetext.WriteLine("\n\t}\n}\n");
+                    writetext.WriteLine("\n\t},\n");
+                    
+                    writetext.Write("\tItemNeedsPickup = {\n\t\t");
+                    foreach (var item in touchState)
+                    {
+                        if (item.Key > 0 && ! item.Value){
+                            writetext.Write("[" + item.Key + "]=true, ");
+                        }
+                    }
+                    writetext.WriteLine("\n\t},\n}\n");
                 }
             }
 
