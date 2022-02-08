@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.Win32;
 
 namespace IsaacSavegameToLua
@@ -10,6 +11,7 @@ namespace IsaacSavegameToLua
         static int curUserID = 0;
         static string lastUsername = "";
         static string platform = "(Undefined)";
+        static int[] ignoreIDs = { 0, 43, 61, 235, 587, 613, 620, 630, 648, 662, 666, 718 };
 
         static void Main(string[] args)
         {
@@ -19,7 +21,12 @@ namespace IsaacSavegameToLua
             Console.WriteLine("~~~ For Steam Users: Login to force a User to be selected ~~~");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-            string saveGamePath = getSteamSavegamePath();
+            string saveGamePath = string.Empty;
+            if (Array.IndexOf(args, "-manual") < 0)
+            {
+                saveGamePath = getSteamSavegamePath();
+            }
+
             if (saveGamePath == string.Empty)
             {
                 Console.WriteLine("~~~~~~~~~~~~~~~~ Manual Mode ~~~~~~~~~~~~~~~~~~~");
@@ -38,9 +45,9 @@ namespace IsaacSavegameToLua
                 }
 
                 Console.WriteLine("Searching savegames in: " + saveGamePath);
-                if (!File.Exists(saveGamePath + "\\rep_persistentgamedata1.dat"))
+                if (!File.Exists(saveGamePath + "\\rep_persistentgamedata1.dat") && !File.Exists(saveGamePath + "abp_persistentgamedata1.dat"))
                 {
-                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep_persistentgamedata1.dat\" file. Aborting...");
+                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep_persistentgamedata1.dat\" or \"abp_persistentgamedata1.dat\" file. Aborting...");
                     Console.WriteLine("Press any key to close the program");
                     Console.ReadKey();
                     return;
@@ -65,14 +72,18 @@ namespace IsaacSavegameToLua
                     writetext.Write("\tItemCollection = {\n\t\t");
                     foreach (var item in touchState)
                     {
-                        writetext.Write("[" + item.Key + "]=" + (item.Value ? "true" : "false") + ", ");
+                        if (Array.IndexOf(ignoreIDs, item.Key) < 0)
+                        {
+                            writetext.Write("[" + item.Key + "]=" + (item.Value ? "true" : "false") + ", ");
+                        }
                     }
                     writetext.WriteLine("\n\t},\n");
-                    
+
                     writetext.Write("\tItemNeedsPickup = {\n\t\t");
                     foreach (var item in touchState)
                     {
-                        if (item.Key > 0 && ! item.Value){
+                        if (Array.IndexOf(ignoreIDs, item.Key) < 0 && !item.Value)
+                        {
                             writetext.Write("[" + item.Key + "]=true, ");
                         }
                     }
@@ -80,6 +91,7 @@ namespace IsaacSavegameToLua
                 }
             }
 
+            Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.WriteLine("SUCCESS! Savegame infos successfully added to EID");
             Console.WriteLine("Press any key to close the program");
             Console.ReadKey();
@@ -130,7 +142,7 @@ namespace IsaacSavegameToLua
                     continue;
 
                 string checkDir = userDir + "\\250900\\remote\\";
-                if (File.Exists(checkDir+"rep_persistentgamedata1.dat") || File.Exists(checkDir + "abp_persistentgamedata1.dat"))
+                if (File.Exists(checkDir + "rep_persistentgamedata1.dat") || File.Exists(checkDir + "abp_persistentgamedata1.dat"))
                 {
                     Console.WriteLine("Found user with a isaac savegame");
                     return userID;
@@ -164,23 +176,57 @@ namespace IsaacSavegameToLua
             return "(No Username found)";
         }
 
+        static string getCorrectSavefile(string steamCloudPath, int saveID, string dlc)
+        {
+            string userFolder = System.Environment.GetEnvironmentVariable("USERPROFILE");
+            string file = steamCloudPath + "\\rep_persistentgamedata" + saveID + ".dat";
+            string altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Repentance\\persistentgamedata" + saveID + ".dat";
+            if (dlc == "ab+")
+            {
+                file = steamCloudPath + "\\abp_persistentgamedata" + saveID + ".dat";
+                altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Afterbirth+\\persistentgamedata" + saveID + ".dat";
+            }
+            if (!File.Exists(file) && !File.Exists(altPath))
+            {
+                // no file exists
+                return "";
+            }
+            if (!File.Exists(file) && File.Exists(altPath))
+            {
+                // only My Games save exists
+                return altPath;
+            }
+            else if (File.Exists(file) && !File.Exists(altPath))
+            {
+                // only steam cloud exists
+                return file;
+            }
+            // get the one with most recent edit time
+            return File.GetLastWriteTime(file) >= File.GetLastWriteTime(altPath) ? file : altPath;
+        }
 
         static Dictionary<int, bool> readSavegame(string filepath, int saveID)
         {
+            Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
+
+            string file = getCorrectSavefile(filepath, saveID, "rep");
             int itemTouchLocation = Convert.ToInt32("0x00000AB6", 16);
-            string file = filepath + "\\rep_persistentgamedata" + saveID + ".dat";
             string dlc = "Repentance";
-            if (!File.Exists(file))
+            if (file == String.Empty)
             {
-                file = filepath + "\\abp_persistentgamedata" + saveID + ".dat";
+                file = getCorrectSavefile(filepath, saveID, "ab+");
                 itemTouchLocation = Convert.ToInt32("0x00000560", 16);
                 dlc = "Afterbirth+";
+                if (!File.Exists(file))
+                {
+                    return itemTouchStatus;
+                }
             }
-            Console.WriteLine("Reading " + dlc + " save game slot " + saveID + "...");
+            Console.WriteLine("\nReading " + dlc + " save game slot " + saveID + "...");
 
-            Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
+            Console.WriteLine("Filepath: " + file);
+
             FileStream fs = new FileStream(file, FileMode.Open);
-            
             int hexIn;
             int itemCount = 0;
             string firstBitItemCount = "";
@@ -195,12 +241,13 @@ namespace IsaacSavegameToLua
                 {
                     itemCount = Convert.ToInt32(hex + firstBitItemCount, 16);
                 }
-                if (i > itemTouchLocation + 2 && i <= itemTouchLocation + itemCount + 2)
+                if (i > itemTouchLocation + 3 && i <= itemTouchLocation + itemCount + 3)
                 {
-                    itemTouchStatus.Add(i - itemTouchLocation - 3, hex == "01");
+                    itemTouchStatus.Add(i - itemTouchLocation - 4, hex == "01");
                 }
             }
             return itemTouchStatus;
         }
     }
+
 }
