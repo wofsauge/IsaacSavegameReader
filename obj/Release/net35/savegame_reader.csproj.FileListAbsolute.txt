@@ -8,4 +8,3 @@ D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.AssemblyInfo.
 D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.csproj.CoreCompileInputs.cache
 D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.exe
 D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.pdb
-D:\Workspace\IsaacSavegameReader\obj\Release\net35\savegame_reader.csproj.AssemblyReference.cache

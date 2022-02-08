@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Microsoft.Win32;
 
 namespace IsaacSavegameToLua
@@ -24,7 +23,7 @@ namespace IsaacSavegameToLua
             string saveGamePath = string.Empty;
             if (Array.IndexOf(args, "-manual") < 0)
             {
-                saveGamePath = getSteamSavegamePath();
+                saveGamePath = GetSteamSavegamePath();
             }
 
             if (saveGamePath == string.Empty)
@@ -67,7 +66,7 @@ namespace IsaacSavegameToLua
                 for (int i = 1; i < 4; i++)
                 {
                     writetext.WriteLine("EID.SaveGame[" + i + "] = {");
-                    Dictionary<int, bool> touchState = readSavegame(saveGamePath, i);
+                    Dictionary<int, bool> touchState = ReadSavegame(saveGamePath, i);
 
                     writetext.Write("\tItemCollection = {\n\t\t");
                     foreach (var item in touchState)
@@ -97,7 +96,7 @@ namespace IsaacSavegameToLua
             Console.ReadKey();
         }
 
-        static string getSteamSavegamePath()
+        static string GetSteamSavegamePath()
         {
             string steamRegistry = "HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam";
             string steamFilepath = (string)Registry.GetValue(steamRegistry, "SteamPath", "");
@@ -115,7 +114,7 @@ namespace IsaacSavegameToLua
             if (curUserID == 0)
             {
                 Console.WriteLine("Steam is currently not running. Trying to find user with Isaac savedata...");
-                curUserID = getUserIDFromPath(userDataPath);
+                curUserID = GetUserIDFromPath(userDataPath);
                 if (curUserID == 0)
                 {
                     Console.WriteLine("No steam user played Isaac :( Falling back to manual mode...");
@@ -125,12 +124,12 @@ namespace IsaacSavegameToLua
             Console.WriteLine("Steam userid found: " + curUserID);
 
             string saveGamePath = userDataPath + "\\" + curUserID + "\\250900\\remote";
-            lastUsername = getUserNameFromID(userDataPath + "\\" + curUserID, curUserID);
+            lastUsername = GetUserNameFromID(userDataPath + "\\" + curUserID, curUserID);
             platform = "Steam";
             return saveGamePath;
         }
 
-        static int getUserIDFromPath(string filepath)
+        static int GetUserIDFromPath(string filepath)
         {
             foreach (string userDir in Directory.GetDirectories(filepath))
             {
@@ -151,7 +150,7 @@ namespace IsaacSavegameToLua
             return 0;
         }
 
-        static string getUserNameFromID(string filepath, int id)
+        static string GetUserNameFromID(string filepath, int id)
         {
             if (File.Exists(filepath + "\\config\\localconfig.vdf"))
             {
@@ -176,7 +175,7 @@ namespace IsaacSavegameToLua
             return "(No Username found)";
         }
 
-        static string getCorrectSavefile(string steamCloudPath, int saveID, string dlc)
+        static string GetCorrectSavefile(string steamCloudPath, int saveID, string dlc)
         {
             string userFolder = System.Environment.GetEnvironmentVariable("USERPROFILE");
             string file = steamCloudPath + "\\rep_persistentgamedata" + saveID + ".dat";
@@ -205,16 +204,16 @@ namespace IsaacSavegameToLua
             return File.GetLastWriteTime(file) >= File.GetLastWriteTime(altPath) ? file : altPath;
         }
 
-        static Dictionary<int, bool> readSavegame(string filepath, int saveID)
+        static Dictionary<int, bool> ReadSavegame(string filepath, int saveID)
         {
             Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
 
-            string file = getCorrectSavefile(filepath, saveID, "rep");
+            string file = GetCorrectSavefile(filepath, saveID, "rep");
             int itemTouchLocation = Convert.ToInt32("0x00000AB6", 16);
             string dlc = "Repentance";
             if (file == String.Empty)
             {
-                file = getCorrectSavefile(filepath, saveID, "ab+");
+                file = GetCorrectSavefile(filepath, saveID, "ab+");
                 itemTouchLocation = Convert.ToInt32("0x00000560", 16);
                 dlc = "Afterbirth+";
                 if (!File.Exists(file))

@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "savegame_reader": {
+      "commandName": "Project"
+    }
+  }
+}
