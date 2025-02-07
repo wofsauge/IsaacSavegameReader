@@ -16,7 +16,7 @@ namespace IsaacSavegameToLua
         {
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
             Console.WriteLine("~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~ Compatible with AB+ & Repentance ~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~ Compatible with AB+, Repentance and Repentance+ ~~~~~~");
             Console.WriteLine("~~~ For Steam Users: Login to force a User to be selected ~~~");
             Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
@@ -44,9 +44,11 @@ namespace IsaacSavegameToLua
                 }
 
                 Console.WriteLine("Searching savegames in: " + saveGamePath);
-                if (!File.Exists(saveGamePath + "\\rep_persistentgamedata1.dat") && !File.Exists(saveGamePath + "abp_persistentgamedata1.dat"))
+                if (!File.Exists(saveGamePath + "\\rep+_persistentgamedata1.dat") &&
+                    !File.Exists(saveGamePath + "\\rep_persistentgamedata1.dat") &&
+                    !File.Exists(saveGamePath + "\\abp_persistentgamedata1.dat"))
                 {
-                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep_persistentgamedata1.dat\" or \"abp_persistentgamedata1.dat\" file. Aborting...");
+                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep+_persistentgamedata1.dat\", \"rep_persistentgamedata1.dat\" or \"abp_persistentgamedata1.dat\" file. Aborting...");
                     Console.WriteLine("Press any key to close the program");
                     Console.ReadKey();
                     return;
@@ -91,7 +93,7 @@ namespace IsaacSavegameToLua
             }
 
             Console.WriteLine("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine("SUCCESS! Savegame infos successfully added to EID");
+            Console.WriteLine("SUCCESS! Savegame infos successfully added to EID\n");
             Console.WriteLine("Press any key to close the program");
             Console.ReadKey();
         }
@@ -178,17 +180,28 @@ namespace IsaacSavegameToLua
         static string GetCorrectSavefile(string steamCloudPath, int saveID, string dlc)
         {
             string userFolder = System.Environment.GetEnvironmentVariable("USERPROFILE");
-            string file = steamCloudPath + "\\rep_persistentgamedata" + saveID + ".dat";
-            string altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Repentance\\persistentgamedata" + saveID + ".dat";
-            if (dlc == "ab+")
+            string file, altPath;
+            switch (dlc)
             {
-                file = steamCloudPath + "\\abp_persistentgamedata" + saveID + ".dat";
-                altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Afterbirth+\\persistentgamedata" + saveID + ".dat";
+                case "rep+":
+                    file = steamCloudPath + "\\rep+persistentgamedata" + saveID + ".dat";
+                    altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Repentance+\\persistentgamedata" + saveID + ".dat";
+                    break;
+                case "rep":
+                    file = steamCloudPath + "\\rep_persistentgamedata" + saveID + ".dat";
+                    altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Repentance\\persistentgamedata" + saveID + ".dat";
+                    break;
+                case "ab+":
+                    file = steamCloudPath + "\\abp_persistentgamedata" + saveID + ".dat";
+                    altPath = userFolder + "\\Documents\\My Games\\Binding of Isaac Afterbirth+\\persistentgamedata" + saveID + ".dat";
+                    break;
+                default:
+                    return String.Empty;
             }
             if (!File.Exists(file) && !File.Exists(altPath))
             {
                 // no file exists
-                return "";
+                return String.Empty;
             }
             if (!File.Exists(file) && File.Exists(altPath))
             {
@@ -207,10 +220,15 @@ namespace IsaacSavegameToLua
         static Dictionary<int, bool> ReadSavegame(string filepath, int saveID)
         {
             Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
-
-            string file = GetCorrectSavefile(filepath, saveID, "rep");
-            int itemTouchLocation = Convert.ToInt32("0x00000AB6", 16);
-            string dlc = "Repentance";
+            string file = GetCorrectSavefile(filepath, saveID, "rep+");
+            int itemTouchLocation = Convert.ToInt32("0x00000B1D", 16);
+            string dlc = "Repentance+";
+            if (file == String.Empty)
+            {
+                file = GetCorrectSavefile(filepath, saveID, "rep");
+                itemTouchLocation = Convert.ToInt32("0x00000AB6", 16);
+                dlc = "Repentance";
+            }
             if (file == String.Empty)
             {
                 file = GetCorrectSavefile(filepath, saveID, "ab+");
@@ -239,6 +257,7 @@ namespace IsaacSavegameToLua
                 if (i == itemTouchLocation + 1)
                 {
                     itemCount = Convert.ToInt32(hex + firstBitItemCount, 16);
+                    Console.WriteLine("Writing data for " + itemCount + " items...");
                 }
                 if (i > itemTouchLocation + 3 && i <= itemTouchLocation + itemCount + 3)
                 {

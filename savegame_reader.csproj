@@ -5,6 +5,22 @@
     <TargetFramework>net35</TargetFramework>
     <StartupObject></StartupObject>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <PackageProjectUrl>https://github.com/wofsauge/IsaacSavegameReader</PackageProjectUrl>
+    <AssemblyName>Isaac Savegame Reader</AssemblyName>
+    <AutoGenerateBindingRedirects>False</AutoGenerateBindingRedirects>
+    <Copyright>MIT Licence</Copyright>
+    <Title>Isaac Savegame Reader for EID</Title>
+    <Company>$(Authors) Wofsauge</Company>
+    <Description>A tool to convert savegame information for isaac files into .lua files compatible for the mod "External item descriptions"</Description>
+    <RepositoryUrl>https://github.com/wofsauge/IsaacSavegameReader</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
 </Project>
