@@ -44,11 +44,11 @@ namespace IsaacSavegameToLua
                 }
 
                 Console.WriteLine("Searching savegames in: " + saveGamePath);
-                if (!File.Exists(saveGamePath + "\\rep+_persistentgamedata1.dat") &&
+                if (!File.Exists(saveGamePath + "\\rep+persistentgamedata1.dat") &&
                     !File.Exists(saveGamePath + "\\rep_persistentgamedata1.dat") &&
                     !File.Exists(saveGamePath + "\\abp_persistentgamedata1.dat"))
                 {
-                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep+_persistentgamedata1.dat\", \"rep_persistentgamedata1.dat\" or \"abp_persistentgamedata1.dat\" file. Aborting...");
+                    Console.WriteLine("The folder \"" + saveGamePath + "\" does not contain a \"rep+persistentgamedata1.dat\", \"rep_persistentgamedata1.dat\" or \"abp_persistentgamedata1.dat\" file. Aborting...");
                     Console.WriteLine("Press any key to close the program");
                     Console.ReadKey();
                     return;
