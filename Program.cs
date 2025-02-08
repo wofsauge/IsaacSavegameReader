@@ -30,7 +30,7 @@ namespace IsaacSavegameToLua
             {
                 Console.WriteLine("~~~~~~~~~~~~~~~~ Manual Mode ~~~~~~~~~~~~~~~~~~~");
                 Console.WriteLine("In manual mode, you need to enter the filepath to your samegames yourself.");
-                Console.WriteLine("Please enter the folder path where your \"abp_persistentgamedata1.dat\" , \"rep_persistentgamedata1.dat\" or \"rep+persistentgamedata1.dat\" file is located:");
+                Console.WriteLine("Please enter the folder path where your \"abp_persistentgamedata1.dat\", \"rep_persistentgamedata1.dat\" or \"rep+persistentgamedata1.dat\" file is located:");
                 // reset steam infos
                 curUserID = 0;
                 lastUsername = "";
