@@ -14,11 +14,14 @@ namespace IsaacSavegameToLua
 
         static void Main(string[] args)
         {
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~~~~");
-            Console.WriteLine("~~~~~~ Compatible with AB+, Repentance and Repentance+ ~~~~~~");
-            Console.WriteLine("~~~ For Steam Users: Login to force a User to be selected ~~~");
-            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~ Isaac Savegame Reader for EID ~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~ Compatible with AB+, Repentance and Repentance+(v1.9.7.10.J212) ~~");
+            Console.WriteLine("~~~~~~~ For Steam Users: Login to force a User to be selected ~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~ Source code and older versions: ~~~~~~~~~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~ https://github.com/wofsauge/IsaacSavegameReader ~~~~~~~~~~");
+            Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
             string saveGamePath = string.Empty;
             if (Array.IndexOf(args, "-manual") < 0)
@@ -221,7 +224,7 @@ namespace IsaacSavegameToLua
         {
             Dictionary<int, bool> itemTouchStatus = new Dictionary<int, bool>();
             string file = GetCorrectSavefile(filepath, saveID, "rep+");
-            int itemTouchLocation = Convert.ToInt32("0x00000B1D", 16);
+            int itemTouchLocation = Convert.ToInt32("0x00000B25", 16);
             string dlc = "Repentance+";
             if (file == String.Empty)
             {
